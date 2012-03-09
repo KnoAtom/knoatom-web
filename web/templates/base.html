@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.min.js"></script>
+{% block head %}
+{% endblock %}
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29730835-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+</head>
+<body>
+
+{% block content %}
+{% endblock %}
+
+<div id="footer">
+<p>Copyright &copy; 2012</span>, University of Michigan</p>
+</div> <!-- end #footer -->
+</body>
+</html>
