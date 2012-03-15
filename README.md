@@ -48,6 +48,24 @@ For an initial setup of knoatom-web, here's some of the things you need to do:
 
 I think all that needs to be done to keep the database up to date is to do the following:
 
+    ./manage.py syncdb
     ./manage.py migrate
 
 If it becomes more complicated than that, I'll update this more, but I think that's it.
+
+### Installing Initial Categories
+
+To bring in the initial categories into the database, you need to provide a 'fixture' that contains the data. To bring in the initial categories from `web_init_categories.json` do:
+
+    ./manage.py migrate
+    ./manage.py loaddata web_init_categories.json
+
+### Creating Fixtures
+
+You can read more about this in the South documentation, but it is more or less this:
+
+    ./manage.py dumpdata web > web.json
+
+`web` referring to the application that is set up in django (`web` is what ours is). This outputs the fixture to `web.json`, rather than print it to the screen.
+
+You can omit the web to dump all the data from the database.
