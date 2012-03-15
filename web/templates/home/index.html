@@ -3,4 +3,16 @@
 {% block content %}
 <h2>Welcome!</h2>
 <p>We're just getting started...</p>
+
+{% for c in content %}
+<div class="row submission">
+<div class="span9">
+<p>{{ c }}</p>
+{% autoescape off %}
+<p>{{ c.content }}</p>
+{% endautoescape %}
+</div> <!-- end .span9 -->
+</div> <!-- end .row .submission-->
+{% endfor%}
+
 {% endblock %}

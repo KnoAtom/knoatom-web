@@ -1,8 +1,10 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
+<title>{{ title|default:"KnoAtom" }}</title>
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
+<link href="{{ STATIC_PREFIX }}css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.min.js"></script>
 {% block head %}
 {% endblock %}
@@ -19,11 +21,75 @@
 </head>
 <body>
 
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    $('.dropdown-toggle').click(function() {
+        if(!$(this).parent().next().is(":visible"))
+            $(this).removeClass('icon-plus').addClass('icon-minus');
+        else
+            $(this).removeClass('icon-minus').addClass('icon-plus');
+        $(this).parent().next().toggle('slow');
+        return false;
+    });
+    $('.dropdown-toggle').each(function() {
+        if(!$(this).parent().parent().hasClass('open')) {
+            $(this).parent().next().hide();
+            $(this).removeClass('icon-minus').addClass('icon-plus');
+        }
+    });
+});
+</script>
+
+<div class="container">
+
+<div class="row">
+<div class="span12">
+<ul class="breadcrumb">
+{% for b in breadcrumbs %}
+<li class="{% if forloop.last %}active{% endif %}">
+<a href="{{ b.url }}">{{ b.title }}</a>
+{% if not forloop.last %}<span class="divider">/</span>{% endif %}
+</li>
+{% endfor %}
+</ul>
+</div> <!-- end .span12 -->
+</div> <!-- end .row -->
+
+<div class="row">
+<div class="span3">
+<div class="well">
+{% block navigation %}
+<ul class="nav nav-list" style="padding-left:0;padding-right:0;">
+{% for c in parent_categories %}
+<li class="divider"></li>
+<li class="{% if c.id == parent_category.id %}open{% endif %} {% if c.id == selected_category.id %}active{% endif %}">
+<a href="{% url category c.id %}"><i class="dropdown-toggle icon-minus"></i> {{ c }}</a>
+<ul class="nav nav-list">
+{% for sc in c.child.all %}
+<li class="{% if sc.id == selected_category.id %}active{% endif %}">
+<a href="{% url category sc.id%}">{{ sc }}</a>
+</li>
+{% endfor %}
+</ul>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
+</div> <!-- end .well -->
+</div> <!-- end .span3 -->
+<div class="span9">
 {% block content %}
 {% endblock %}
+</div> <!-- end .span9 -->
+</div> <!-- end .row -->
 
+<div class="row">
+<div class="span12">
 <div id="footer">
 <p>Copyright &copy; 2012</span>, University of Michigan</p>
 </div> <!-- end #footer -->
+</div> <!-- end .span12 -->
+</div> <!-- end .row -->
+</div> <!-- end .container -->
 </body>
 </html>
