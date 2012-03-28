@@ -1,11 +1,8 @@
-from django.template import Context, loader
-from django.http import HttpResponse
-
 from django.core.urlresolvers import reverse
-
-from web.models import Category, Submission
-
 from django.db.models import Q
+from django.http import HttpResponse
+from django.template import Context, loader
+from web.models import Category, Submission
 
 def index(request):
     t = loader.get_template('home/index.html')
@@ -30,7 +27,7 @@ def category(request, cat):
 
     content = None
     if len(parents) == 1: # we are at a specific category
-        content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) )
+        content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) ).distinct()
 
     t = loader.get_template('home/index.html')
     c = Context({

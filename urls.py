@@ -5,6 +5,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^login/?$', 'web.views.account.login', name='login'),
+
     url(r'^category/(\d+)/?$', 'web.views.home.category', name='category'),
     url(r'^$', 'web.views.home.index', name='home'),
 
