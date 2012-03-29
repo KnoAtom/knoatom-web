@@ -1,16 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Welcome!</h2>
-<p>We're just getting started...</p>
+
+{% if not content %}
+<div class="page-header">
+<h1>Welcome</h1>
+</div>
+<p>Still starting to get off the ground!</p>
+{% endif %}
 
 {% for c in content %}
 <div class="row submission">
 <div class="span9">
-<p>{{ c }}</p>
+<div class="page-header" style="padding-bottom:5px;">
+<h2>
+{{ c }}
+<small>Bryan Kendall</small>
+</h2>
+</div>
 {% autoescape off %}
 <p>{{ c.content }}</p>
 {% endautoescape %}
+
+<div class="well">
+{% for t in c.tags.all %}
+<a href="{% url category t.id %}">{{ t }}</a> {% if not forloop.last %} | {% endif %}
+{% endfor %}
+</div>
+
 </div> <!-- end .span9 -->
 </div> <!-- end .row .submission-->
 {% endfor%}

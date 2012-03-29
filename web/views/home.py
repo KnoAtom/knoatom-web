@@ -25,9 +25,7 @@ def category(request, cat):
 
     breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
 
-    content = None
-    if len(parents) == 1: # we are at a specific category
-        content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) ).distinct()
+    content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) ).distinct()
 
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {

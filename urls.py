@@ -7,6 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^login/?$', 'web.views.account.login', name='login'),
     url(r'^logout/?$', 'web.views.account.logout', name='logout'),
+    url(r'^register/?$', 'web.views.account.register', name='register'),
+    url(r'^forgot_password/?$', 'web.views.account.forgot_password', name='forgot_password'),
 
     url(r'^category/(\d+)/?$', 'web.views.home.category', name='category'),
     url(r'^$', 'web.views.home.index', name='home'),
