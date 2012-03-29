@@ -13,19 +13,20 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def category(request, cat):
-    category = Category.objects.filter(id=cat)[0]
+    category = Category.objects.get(id=cat)
     parents = category.parent.all()
     breadcrumbs = [{'url': reverse('home'), 'title': 'Home'}]
 
     if len(parents) == 0:
         parent = category
+        content = Submission.objects.filter( Q(tags=category) | Q(tags__in=category.child.distinct()) ).distinct()
     else:
         parent = parents[0]
+        content = Submission.objects.filter( Q(tags=category) ).distinct()
         breadcrumbs.append({'url': reverse('category', args=[parent.id]), 'title': parent})
 
     breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
 
-    content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) ).distinct()
 
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {
