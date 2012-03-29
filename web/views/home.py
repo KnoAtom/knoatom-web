@@ -1,12 +1,12 @@
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse
-from django.template import Context, loader
+from django.template import RequestContext, loader
 from web.models import Category, Submission
 
 def index(request):
     t = loader.get_template('home/index.html')
-    c = Context({
+    c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}],
         'parent_categories': Category.objects.filter(parent=None),
     })
@@ -30,7 +30,7 @@ def category(request, cat):
         content = Submission.objects.filter( Q(tags=category) | Q(tags=parent) ).distinct()
 
     t = loader.get_template('home/index.html')
-    c = Context({
+    c = RequestContext(request, {
         'breadcrumbs': breadcrumbs,
         'selected_category': category,
         'parent_category': parent,

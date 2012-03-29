@@ -60,6 +60,7 @@ jQuery(document).ready(function(){
 <div class="well">
 {% block navigation %}
 <ul class="nav nav-list" style="padding-left:0;padding-right:0;">
+<li class="nav-header">Categories</li>
 {% for c in parent_categories %}
 <li class="divider"></li>
 <li class="{% if c.id == parent_category.id %}open{% endif %} {% if c.id == selected_category.id %}active{% endif %}">
@@ -73,11 +74,23 @@ jQuery(document).ready(function(){
 </ul>
 </li>
 {% endfor %}
+<!-- meta -->
+<li class="divider"></li>
+{% if user.is_authenticated %}
+<li class="nav-header">Meta</li>
+<li><a href="#">{{ user }}</a></li>
+<li><a href="{% url logout %}">Logout</a></li>
+{% else %}
+<li><a href="{% url login %}">Login</a></li>
+{% endif %}
 </ul>
 {% endblock %}
 </div> <!-- end .well -->
 </div> <!-- end .span3 -->
 <div class="span9">
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
 {% block content %}
 {% endblock %}
 </div> <!-- end .span9 -->

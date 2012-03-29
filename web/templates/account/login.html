@@ -3,10 +3,15 @@
 {% block content %}
 <h2>Login</h2>
 
-<form action="{{ reverse login }}" method="post">
+<form class="form-horizontal" action="{% url login %}" method="post">
 {% csrf_token %}
 
-<input type="submit" value="Submit" />
+{% include "form_template.html" with form=login_form %}
+
+<div class="form-actions">
+<input class="btn btn-primary" type="submit" value="Submit" />
+<input class="btn" type="reset" value="Clear" />
+</div>
 </form>
 
 {% endblock %}
