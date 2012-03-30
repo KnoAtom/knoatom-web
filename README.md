@@ -15,10 +15,6 @@
 
         pip install mysql-python
 
-* south (database migration tool)
-
-        pip install south
-
 ## Initial Setup
 
 For an initial setup of knoatom-web, here's some of the things you need to do:
@@ -37,28 +33,18 @@ For an initial setup of knoatom-web, here's some of the things you need to do:
     * `SECRET_KEY` - longer the better - [random.org](http://www.random.org/strings/) will help you out)
 3. Set up your database running the following commands (errors in these will probably be fixed by reading the errors and adjusting `settings.py`):
     * `./manage.py syncdb` - creates the database tables and initial user
-    * `./manage.py migrate` - brings the database schema up to speed
+    * `./manage.py loaddata web/fixtures/web_init_categories.json` - installs initial data
 4. Cross your fingers, and run the server:
 
         ./manage.py runserver 8080
 
 5. Open the url [http://localhost:8080](http://localhost:8080) and hopefully you'll see it (if you're running on your local machine).
 
-## Migrating the Database
-
-I think all that needs to be done to keep the database up to date is to do the following:
-
-    ./manage.py syncdb
-    ./manage.py migrate
-
-If it becomes more complicated than that, I'll update this more, but I think that's it.
-
 ### Installing Initial Categories
 
 To bring in the initial categories into the database, you need to provide a 'fixture' that contains the data. To bring in the initial categories from `web_init_categories.json` do:
 
-    ./manage.py migrate
-    ./manage.py loaddata web_init_categories.json
+    ./manage.py loaddata web/fixtures/web_init_categories.json
 
 ### Creating Fixtures
 
