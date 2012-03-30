@@ -24,3 +24,12 @@ class Submission(models.Model):
 
     def __unicode__(self):
         return self.title
+
+class Vote(models.Model):
+    user = models.ForeignKey(User)
+    submission = models.ForeignKey(Submission, related_name='votes')
+    rating = models.IntegerField()
+    date = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.rating

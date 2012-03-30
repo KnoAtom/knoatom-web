@@ -25,8 +25,11 @@ def category(request, cat):
         content = Submission.objects.filter( Q(tags=category) ).distinct()
         breadcrumbs.append({'url': reverse('category', args=[parent.id]), 'title': parent})
 
-    breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
-
+    if request.user:
+        for c in content:
+            ratings = c.votes.filter(user=request.user)
+            if ratings.count() == 1:
+                c.user_rating = ratings[0].rating
 
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {

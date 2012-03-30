@@ -125,9 +125,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-
-    # Database migration framework
-    'south',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -152,3 +149,7 @@ LOGGING = {
         },
     }
 }
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

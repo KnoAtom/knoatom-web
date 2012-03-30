@@ -9,27 +9,6 @@
 <p>Still starting to get off the ground!</p>
 {% endif %}
 
-{% for c in content %}
-<div class="row submission">
-<div class="span9">
-<div class="page-header" style="padding-bottom:5px;">
-<h2>
-{{ c }}
-<small>Bryan Kendall</small>
-</h2>
-</div>
-{% autoescape off %}
-<p>{{ c.content }}</p>
-{% endautoescape %}
-
-<div class="well">
-{% for t in c.tags.all %}
-<a href="{% url category t.id %}">{{ t }}</a> {% if not forloop.last %} | {% endif %}
-{% endfor %}
-</div>
-
-</div> <!-- end .span9 -->
-</div> <!-- end .row .submission-->
-{% endfor%}
+{% include "home/content.html" %}
 
 {% endblock %}

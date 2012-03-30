@@ -22,7 +22,7 @@
 <body>
 
 <script type="text/javascript">
-jQuery(document).ready(function(){
+jQuery(document).ready(function() {
     $('.dropdown-toggle').click(function() {
         if(!$(this).parent().next().is(":visible"))
             $(this).removeClass('icon-plus').addClass('icon-minus');
@@ -36,6 +36,59 @@ jQuery(document).ready(function(){
             $(this).parent().next().hide();
             $(this).removeClass('icon-minus').addClass('icon-plus');
         }
+    });
+});
+</script>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    $('.rating').each(function() {
+        $(this).children().each(function() {
+            $(this).hover(function() {
+                $(this).addClass('icon-star')
+                    .removeClass('icon-star-empty')
+                    .prevAll()
+                    .addClass('icon-star')
+                    .removeClass('icon-star-empty');
+                $(this).nextAll()
+                    .addClass('icon-star-empty')
+                    .removeClass('icon-star');
+            }, function() {
+                $(this).parent().children().each(function() {
+                    if(!$(this).hasClass('filled')) {
+                        $(this).removeClass('icon-star').addClass('icon-star-empty')
+                    } else {
+                        $(this).removeClass('icon-star-empty').addClass('icon-star')
+                    }
+                });
+            });
+            $(this).click(function() {
+                $.ajax({
+                    'url': '/ajax/vote/' + $(this).parent().attr('data-submission') + '/' + $(this).attr('data-vote'),
+                    'context': this,
+                    'statusCode': {
+                        200: function(data) {
+                            console.log(data)
+                            if(data.result == true) {
+                                console.log(this)
+                                $(this)
+                                    .addClass('icon-star')
+                                    .removeClass('icon-star-empty')
+                                    .addClass('filled')
+                                $(this).prevAll()
+                                    .addClass('icon-star')
+                                    .removeClass('icon-star-empty')
+                                    .addClass('filled')
+                                $(this).nextAll()
+                                    .addClass('icon-star-empty')
+                                    .removeClass('icon-star')
+                                    .removeClass('filled')
+                            }
+                        }
+                    },
+                });
+            });
+        });
     });
 });
 </script>
@@ -76,8 +129,8 @@ jQuery(document).ready(function(){
 {% endfor %}
 <!-- meta -->
 <li class="divider"></li>
-{% if user.is_authenticated %}
 <li class="nav-header">Meta</li>
+{% if user.is_authenticated %}
 <li><a href="#">{{ user }}</a></li>
 <li><a href="{% url logout %}">Logout</a></li>
 {% else %}
