@@ -7,6 +7,7 @@
 <small>by {{ c.owner }}</small>
 </h2>
 </div>
+{% if request.user %}
 <div class="rating" data-submission="{{ c.id }}">
 <i class="{% if c.user_rating >= 1 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="1"></i>
 <i class="{% if c.user_rating >= 2 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="2"></i>
@@ -14,6 +15,7 @@
 <i class="{% if c.user_rating >= 4 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="4"></i>
 <i class="{% if c.user_rating >= 5 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="5"></i>
 </div>
+{% endif %}
 {% autoescape off %}
 <p>{{ c.content }}</p>
 {% endautoescape %}
