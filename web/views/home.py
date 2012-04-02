@@ -25,6 +25,8 @@ def category(request, cat):
         content = Submission.objects.filter( Q(tags=category) ).distinct()
         breadcrumbs.append({'url': reverse('category', args=[parent.id]), 'title': parent})
 
+    breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
+
     if request.user.is_authenticated():
         for c in content:
             ratings = c.votes.filter(user=request.user)
