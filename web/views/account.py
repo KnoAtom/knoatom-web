@@ -20,9 +20,8 @@ def forgot_password(request):
         if form.is_valid():
             user = User.objects.get(email=form.cleaned_data['email'])
             if user:
-                new_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                print new_password
-                send_mail('Knoatom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'bkend@umich.edu', [user.email])
+                new_password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
+                send_mail('Knoatom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
                 user.set_password(new_password)
                 user.save()
                 messages.success(request, 'If we have your email on file, you should expect a password reset within a couple minutes to appear in your inbox.')
@@ -82,6 +81,7 @@ def register(request):
             user.first_name = form.cleaned_data['firstname']
             user.last_name = form.cleaned_data['lastname']
             user.save()
+            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu. If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
             messages.success(request, 'You have been registered. Please login to continue.')
             return HttpResponseRedirect(reverse('login'))
         error = 'Could not register you. Try again.'
