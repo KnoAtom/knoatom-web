@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('textarea').addClass('span6').wysihtml5();
+
+    $('#preview_video').click(function() {
+        var video_id = $('#id_video').val();
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "ytPlayer" };
+        $(this).parent().append(
+            '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
+            '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
+            '</div><div class="modal-body">' +
+            '<div id="video_preview_div">Loading...</div>' +
+            '</div></div>'
+        );
+        swfobject.embedSWF("http://www.youtube.com/v/" + video_id + "?version=3&enablejsapi=1&playerapiid=player1", "video_preview_div", "480", "295", "9", null, null, params, atts);
+        $('#preview_modal').modal('show');
+        $('#preview_modal').on('hidden', function () {
+            $(this).remove();
+        });
+    });
+});
+</script>
+
+<form class="form-horizontal" action="{% url submit %}" method="post">
+{% csrf_token %}
+
+{% include "form_template.html" with form=form %}
+
+<div class="form-actions">
+<input class="btn btn-primary" type="submit" value="Submit" />
+<a class="btn" id="preview_video">Preview Video</a>
+</div>
+</form>
+
+{% endblock %}
+

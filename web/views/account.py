@@ -1,7 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -9,8 +9,8 @@ from django.forms.util import ErrorList
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, RequestContext
 import random, string
-from web.models import Category
 from web.forms.account import *
+from web.models import Category
 
 def forgot_password(request):
     if request.user.is_authenticated():
@@ -47,10 +47,11 @@ def login(request):
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 auth_login(request, user)
+                if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
                 return HttpResponseRedirect(reverse('home'))
         messages.warning(request, 'Could not authenticate you. Try again.')
     else:
-        form = LoginForm(error_class=PlainErrorList)
+        form = LoginForm(initial={'redirect': request.GET.get('next', None),}, error_class=PlainErrorList)
 
     t = loader.get_template('account/login.html')
     c = RequestContext(request, {
@@ -60,6 +61,7 @@ def login(request):
     })
     return HttpResponse(t.render(c))
 
+@login_required()
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect(reverse('login'))
@@ -74,7 +76,6 @@ class PlainErrorList(ErrorList):
 def register(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('home'))
-    error = None
     if request.method == 'POST':
         form = RegisterForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
@@ -84,14 +85,13 @@ def register(request):
             user.save()
             messages.success(request, 'You have been registered. Please login to continue.')
             return HttpResponseRedirect(reverse('login'))
-        error = 'Could not register you. Try again.'
+        messages.warning(request, 'Could not register you. Try again.')
     else:
         form = RegisterForm(error_class=PlainErrorList)
 
     t = loader.get_template('account/register.html')
     c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('register'), 'title': 'Register'}],
-        'error': error,
         'register_form': form,
         'parent_categories': Category.objects.filter(parent=None),
     })
