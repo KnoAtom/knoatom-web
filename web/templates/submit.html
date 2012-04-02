@@ -10,7 +10,7 @@ $(document).ready(function() {
         var video_id = $('#id_video').val();
         var params = { allowScriptAccess: "always" };
         var atts = { id: "ytPlayer" };
-        $(this).parent().append(
+        $('body').append(
             '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
             '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
             '</div><div class="modal-body">' +
