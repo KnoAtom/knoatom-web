@@ -6,6 +6,9 @@
 <label class="control-label" for="{{ field.html_name }}">{{ field.label }}</label>
 <div class="controls">
 {{ field }}
+{% if field.help_text %}
+<p class="help-block">{{ field.help_text }}</p>
+{% endif %}
 {% if field.errors %}
 <span class="help-inline">{{ field.errors }}</span>
 {% endif %}
