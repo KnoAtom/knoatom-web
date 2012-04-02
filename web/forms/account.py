@@ -6,7 +6,7 @@ class ForgotPasswordForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(widget=forms.PasswordInput, max_length=102, required=True)
-    redirect = forms.CharField(widget=forms.widgets.HiddenInput)
+    redirect = forms.CharField(widget=forms.widgets.HiddenInput, required=False)
 
 class RegisterForm(forms.Form):
     firstname = forms.CharField(max_length=100, required=True, label='First Name')
