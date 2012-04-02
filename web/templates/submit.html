@@ -9,7 +9,7 @@ $(document).ready(function() {
     $('#preview_video').click(function() {
         var video_id = $('#id_video').val();
         var params = { allowScriptAccess: "always" };
-        var atts = { id: "ytPlayer" };
+        var atts = { id: "ytPlayer", 'wmode': 'opaque' };
         $('body').append(
             '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
             '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
