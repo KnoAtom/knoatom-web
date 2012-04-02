@@ -82,7 +82,7 @@ def register(request):
             user.first_name = form.cleaned_data['firstname']
             user.last_name = form.cleaned_data['lastname']
             user.save()
-            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu. If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
             messages.success(request, 'You have been registered. Please login to continue.')
             return HttpResponseRedirect(reverse('login'))
         messages.warning(request, 'Could not register you. Try again.')
