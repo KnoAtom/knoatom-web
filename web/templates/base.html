@@ -4,8 +4,15 @@
 <title>{{ title|default:"KnoAtom" }}</title>
 {% load static %}
 {% get_static_prefix as STATIC_PREFIX %}
-<link href="{{ STATIC_PREFIX }}css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/swfobject.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/wysihtml5-0.3.0_rc2.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-wysihtml5.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-modal.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-button.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-dropdown.js"></script>
+<link href="{{ STATIC_PREFIX }}css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ STATIC_PREFIX }}css/bootstrap-wysihtml5.css" rel="stylesheet">
 {% block head %}
 {% endblock %}
 <script type="text/javascript">
@@ -23,7 +30,7 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
-    $('.dropdown-toggle').click(function() {
+    $('.sidebar-dropdown-toggle').click(function() {
         if(!$(this).parent().next().is(":visible"))
             $(this).removeClass('icon-plus').addClass('icon-minus');
         else
@@ -31,7 +38,7 @@ jQuery(document).ready(function() {
         $(this).parent().next().toggle('slow');
         return false;
     });
-    $('.dropdown-toggle').each(function() {
+    $('.sidebar-dropdown-toggle').each(function() {
         if(!$(this).parent().parent().hasClass('open')) {
             $(this).parent().next().hide();
             $(this).removeClass('icon-minus').addClass('icon-plus');
@@ -117,7 +124,7 @@ jQuery(document).ready(function() {
 {% for c in parent_categories %}
 <li class="divider"></li>
 <li class="{% if c.id == parent_category.id %}open{% endif %} {% if c.id == selected_category.id %}active{% endif %}">
-<a href="{% url category c.id %}"><i class="dropdown-toggle icon-minus"></i> {{ c }}</a>
+<a href="{% url category c.id %}"><i class="sidebar-dropdown-toggle icon-minus"></i> {{ c }}</a>
 <ul class="nav nav-list">
 {% for sc in c.child.all %}
 <li class="{% if sc.id == selected_category.id %}active{% endif %}">
