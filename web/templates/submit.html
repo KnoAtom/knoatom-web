@@ -37,7 +37,9 @@ $(document).ready(function() {
 });
 </script>
 
-<form class="form-horizontal" action="{% url submit %}" method="post">
+<h2>Create New Submission</h2>
+
+<form class="form-horizontal" action="{{ form_action }}" method="post">
 {% csrf_token %}
 
 {% include "form_template.html" with form=form %}
