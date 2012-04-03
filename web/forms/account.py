@@ -14,3 +14,7 @@ class RegisterForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     email = forms.EmailField(max_length=100, required=True)
     password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
+
+class ChangePasswordForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
+    new_password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)

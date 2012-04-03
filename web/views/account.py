@@ -12,6 +12,28 @@ import random, string
 from web.forms.account import *
 from web.models import Category
 
+@login_required()
+def index(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST, error_class=PlainErrorList)
+        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['new_password']:
+            user = User.objects.get(pk=request.user.id)
+            if user:
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+                messages.success(request, 'Your password has been changed.')
+                return HttpResponseRedirect(reverse('account'))
+    else:
+        form = ChangePasswordForm(error_class=PlainErrorList)
+
+    t = loader.get_template('account/index.html')
+    c = RequestContext(request, {
+        'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('account'), 'title': 'Account'}],
+        'form': form,
+        'parent_categories': Category.objects.filter(parent=None),
+    })
+    return HttpResponse(t.render(c))
+
 def forgot_password(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('home'))

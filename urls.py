@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^logout/?$', 'web.views.account.logout', name='logout'),
     url(r'^register/?$', 'web.views.account.register', name='register'),
     url(r'^forgot_password/?$', 'web.views.account.forgot_password', name='forgot_password'),
+    url(r'^account/?$', 'web.views.account.index', name='account'),
 
     url(r'^ajax/vote/(\d+)/(\d+)/?$', 'web.views.ajax.vote', name='vote'),
 
