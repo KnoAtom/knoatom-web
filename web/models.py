@@ -18,6 +18,7 @@ class Submission(models.Model):
     date = models.DateTimeField(auto_now_add=True, blank=True)
     title = models.CharField(max_length=200)
     content = models.TextField()
+    video = models.CharField(max_length=400)
     date_created = models.DateTimeField(auto_now_add=True, default=datetime.now)
     date_modified = models.DateTimeField(auto_now=True, default=datetime.now)
     tags = models.ManyToManyField(Category)

@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+import json
 from web.models import Category, Submission
 
 def index(request):
@@ -26,6 +27,10 @@ def category(request, cat):
         breadcrumbs.append({'url': reverse('category', args=[parent.id]), 'title': parent})
 
     breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
+
+    # un-json-fy the videos
+    for c in content:
+        c.video = [v for v in json.loads(c.video)]
 
     if request.user.is_authenticated():
         for c in content:
