@@ -23,7 +23,7 @@ def index(request):
                 user.save()
                 messages.success(request, 'Your password has been changed.')
                 return HttpResponseRedirect(reverse('account'))
-        message.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
+        messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
     else:
         form = ChangePasswordForm(error_class=PlainErrorList)
 
