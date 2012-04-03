@@ -40,7 +40,7 @@ def index(request, sid):
                 s.save()
                 s.tags = form.cleaned_data['tags']
                 s.save()
-                return HttpResponseRedirect(reverse('post'), args=[s.id])
+                return HttpResponseRedirect(reverse('post', args=[s.id]))
             messages.warning(request, 'Error submitting.')
     else:
         if sid:
