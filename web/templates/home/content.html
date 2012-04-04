@@ -3,9 +3,14 @@
 <div class="span9">
 <div class="page-header" style="padding-bottom:5px;">
 <h2>
-{{ c }}
+<a style="color:black;" href="{% url post c.id %}">{{ c }}</a>
 <small>by {{ c.owner }}</small>
 </h2>
+{% if c.owner == user %}
+<div class="edit">
+<p><a href="{% url submit c.id %}">Edit</a></p>
+</div>
+{% endif %}
 </div>
 {% if user.is_authenticated %}
 <div class="rating" data-submission="{{ c.id }}">
@@ -34,7 +39,7 @@
 {% for t in c.tags.all %}
 <a href="{% url category t.id %}">{{ t }}</a> {% if not forloop.last %} | {% endif %}
 {% endfor %}
-</div>
+</div> <!-- end .well -->
 </div> <!-- end .span9 -->
 </div> <!-- end .row .submission-->
 {% endfor%}
