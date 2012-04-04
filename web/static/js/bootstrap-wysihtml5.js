@@ -8,8 +8,8 @@
 							"</a>" +
 						    "<ul class='dropdown-menu'>" +
 						      	"<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='div'>Normal text</a></li>" +
-					            "<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='h1'>Heading 1</a></li>" +
-					            "<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='h2'>Heading 2</a></li>" +
+					            "<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='h3'>Heading 1</a></li>" +
+					            "<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='h4'>Heading 2</a></li>" +
 						    "</ul>" +
 						"</li>",
 		"emphasis":     "<li>" +
@@ -42,8 +42,8 @@
 			ol: {},
 			ul: {},
 			li: {},
-			h1: {},
-			h2: {},
+			h3: {},
+			h4: {},
 			a:  {
 				set_attributes: {
 					target: "_blank",
