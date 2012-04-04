@@ -6,7 +6,7 @@
 <a style="color:black;" href="{% url post c.id %}">{{ c }}</a>
 <small>by {{ c.owner }}</small>
 </h2>
-{% if c.owner == user %}
+{% if user.is_staff or user.is_superuser or c.owner == user %}
 <div class="edit">
 <p><a href="{% url submit c.id %}">Edit</a></p>
 </div>
