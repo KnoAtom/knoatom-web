@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^login/?$', 'web.views.account.login', name='login'),
     url(r'^logout/?$', 'web.views.account.logout', name='logout'),
     url(r'^register/?$', 'web.views.account.register', name='register'),
+    url(r'^validate/$', 'web.views.account.validate', name='validate'),
     url(r'^forgot_password/?$', 'web.views.account.forgot_password', name='forgot_password'),
     url(r'^account/?$', 'web.views.account.index', name='account'),
 

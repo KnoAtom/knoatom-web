@@ -68,6 +68,9 @@ def login(request):
         if form.is_valid():
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
+                if user.is_active == 0:
+                    messages.warning(request, 'Please activate your account before you log in.')
+                    return HttpResponseRedirect(reverse('login'))
                 auth_login(request, user)
                 if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
                 return HttpResponseRedirect(reverse('home'))
@@ -95,6 +98,8 @@ class PlainErrorList(ErrorList):
         if not self: return u''
         return u'<br/>'.join([ e for e in self ])
 
+import hashlib
+
 def register(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('home'))
@@ -104,8 +109,11 @@ def register(request):
             user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']);
             user.first_name = form.cleaned_data['firstname']
             user.last_name = form.cleaned_data['lastname']
+            user.is_active = False
             user.save()
-            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+            m = hashlib.md5()
+            m.update(user.email + str(user.date_joined).split('.')[0])
+            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. Please validate your account by going to ' + request.build_absolute_uri('validate') + '?email=' + user.email + '&validation=' + m.hexdigest() + ' . If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
             messages.success(request, 'You have been registered. Please login to continue.')
             return HttpResponseRedirect(reverse('login'))
         messages.warning(request, 'Could not register you. Try again.')
@@ -119,3 +127,23 @@ def register(request):
         'parent_categories': Category.objects.filter(parent=None),
     })
     return HttpResponse(t.render(c))
+
+def validate(request):
+    if request.user.is_authenticated():
+        messages.warning(request, 'You are already confirmed.')
+        return HttpResponseRedirect(reverse('home'))
+    if request.GET.get('validation', None) and request.GET.get('email', None):
+        user = User.objects.get(email=request.GET.get('email'))
+        m = hashlib.md5()
+        m.update(user.email + str(user.date_joined))
+        if m.hexdigest() == request.GET.get('validation'):
+            user.is_active = True
+            user.save()
+            messages.success(request, 'Thank you for validating your email!')
+            return HttpResponseRedirect(reverse('account'))
+        else:
+            messages.warning(request, 'There was an error processing your validation.')
+            return HttpResponseRedirect(reverse('login'))
+
+    messages.warning(request, 'Your reached a page in an invalid manner.')
+    return HttpResponseRedirect(reverse('home'))
