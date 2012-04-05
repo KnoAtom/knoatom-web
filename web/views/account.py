@@ -66,7 +66,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
             if user is not None:
                 if user.is_active == 0:
                     messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
@@ -100,13 +100,12 @@ def register(request):
         form = RegisterForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
             email_search = User.objects.filter(email=form.cleaned_data['email'])
-            username_search = User.objects.filter(username=form.cleaned_data['username'])
             if len(email_search) > 0:
                 messages.warning(request, 'Could not register you. Email is already registered.')
-            if len(username_search) > 0:
-                messages.warning(request, 'Could not register you. Username is already registered.')
-            if len(email_search) == 0 and len(username_search) == 0:
-                user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']);
+            if form.cleaned_data['password'] != form.cleaned_data['password_confirmation']:
+                messages.warning(request, 'Passwords did not match. Please try again.')
+            if len(email_search) == 0 and form.cleaned_data['password'] == form.cleaned_data['password_confirmation']:
+                user = User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['email'], form.cleaned_data['password']);
                 user.first_name = form.cleaned_data['firstname']
                 user.last_name = form.cleaned_data['lastname']
                 user.is_active = False

@@ -18,19 +18,20 @@ def batch_add(request):
     if request.method == 'POST':
         form = BatchAddUsersForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
+            users_added = 0
             for u in form.cleaned_data['users'].split('\n'):
                 if u == '': continue
-                uname = re.search('^([a-z]*)', u)
-                user_search = User.objects.filter( Q(email=u) | Q(username=uname) )
-                if not re.match('[a-z]*@umich\.edu', u) or len(user_search) > 0 or not uname:
+                user_search = User.objects.filter( Q(email=u) | Q(username=u) )
+                if not re.match('[a-z]*@umich\.edu', u) or len(user_search) > 0:
                     messages.warning(request, 'Could not add ' + u + '. Username or email are already in the database, or email is not uniqname@umich.edu.')
                     continue
                 password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
-                user = User.objects.create_user(email=u, username=uname.group(0))
+                user = User.objects.create_user(email=u, username=u)
                 user.set_password(password)
                 user.save()
-                send_mail('Knoatom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + uname.group(0) + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', ['knoatom-webmaster@umich.edu'])
-            messages.success(request, 'Users have been added.')
+                users_added += 1
+                send_mail('Knoatom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + u + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', ['knoatom-webmaster@umich.edu'])
+            messages.success(request, str(users_added) + ' users have been added.')
         else:
             messages.warning(request, 'Could not add users. Did you have the format correct?')
     else:
