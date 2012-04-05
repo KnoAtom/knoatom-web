@@ -8,26 +8,28 @@ $(document).ready(function() {
 
     $('#preview_video').click(function() {
         var video_id = $('#id_video').val();
-        if ( /[A-Za-z0-9-_]{11}/.test(video_id) == true ) {
-            var params = { allowScriptAccess: "always" };
-            var atts = { id: "modal_player", 'wmode': 'opaque' };
-            $('body').append(
-                '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
-                '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
-                '</div><div class="modal-body">' +
-                '<div id="video_preview_div">Loading...</div>' +
-                '</div></div>'
-            );
-            swfobject.embedSWF("http://www.youtube.com/v/" + video_id + "?version=3&enablejsapi=1&playerapiid=player1", "video_preview_div", "480", "295", "9", null, null, params, atts);
-        } else {
-            $('body').append(
-                '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
-                '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
-                '</div><div class="modal-body">' +
-                '<p>Please use a valid YouTube video id. It should be 11 characters long, and located in the url ' +
-                'for your video. e.g. http://www.youtube.com/watch?v=VIDEO_ID</p>' +
-                '</div></div>'
-            );
+        var v_ids = video_id.split(" ");
+        var video_preview_divs = "";
+        for(var i = 0; i < v_ids.length; i++) {
+            if ( /[A-Za-z0-9-_]{11}/.test(v_ids[i]) == true ) {
+                video_preview_divs += '<div id="video_preview_div_' + v_ids[i] + '">Loading...</div><hr />';
+            } else {
+                video_preview_divs += '<div><p>' + v_ids[i] + ' is an invalid YouTube video id. It should be 11 characters long, and located in the url for your video. e.g. http://www.youtube.com/watch?v=VIDEO_ID</p></div><hr />';
+            }
+        }
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "modal_player", 'wmode': 'opaque' };
+        $('body').append(
+            '<div class="modal fade" id="preview_modal"><div class="modal-header">' +
+            '<a class="close" data-dismiss="modal">x</a><h3>Video Preview</h3>' +
+            '</div><div class="modal-body">' +
+            video_preview_divs +
+            '</div></div>'
+        );
+        for(var i = 0; i < v_ids.length; i++) {
+            if ( /[A-Za-z0-9-_]{11}/.test(v_ids[i]) == true ) {
+                swfobject.embedSWF("http://www.youtube.com/v/" + v_ids[i] + "?version=3&enablejsapi=1&playerapiid=player1", "video_preview_div_" + v_ids[i], "480", "295", "9", null, null, params, atts);
+            }
         }
         $('#preview_modal').modal('show');
         $('#preview_modal').on('hidden', function () {

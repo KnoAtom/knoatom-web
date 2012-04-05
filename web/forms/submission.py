@@ -14,8 +14,9 @@ class PlainErrorList(ErrorList):
 
 def validate_youtube_video_id(value):
     regex_vid_id = re.compile('[A-Za-z0-9-_]{11}')
-    if not regex_vid_id.match(value):
-        raise ValidationError(u'%s is not a valid YouTube video id.' % value)
+    for v in value.split(' '):
+        if not regex_vid_id.match(v):
+            raise ValidationError(u'%s is not a valid YouTube video id.' % v)
 
 class SubmissionForm(forms.Form):
     title = forms.CharField(max_length=100, required=True)
