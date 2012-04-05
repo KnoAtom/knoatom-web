@@ -1,6 +1,14 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms.util import ErrorList
 import re
+
+class PlainErrorList(ErrorList):
+    def __unicode__(self):
+        return self.as_plain()
+    def as_plain(self):
+        if not self: return u''
+        return u'<br/>'.join([ e for e in self ])
 
 def validate_umich_email(value):
     regex_umich_email = re.compile('\w*@umich.edu')

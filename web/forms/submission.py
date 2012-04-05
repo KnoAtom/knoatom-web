@@ -1,8 +1,16 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.forms.util import ErrorList
 from web.models import Category, Submission
 import re
+
+class PlainErrorList(ErrorList):
+    def __unicode__(self):
+        return self.as_plain()
+    def as_plain(self):
+        if not self: return u''
+        return u'<br/>'.join([ e for e in self ])
 
 def validate_youtube_video_id(value):
     regex_vid_id = re.compile('[A-Za-z0-9-_]{11}')

@@ -69,7 +69,7 @@ def login(request):
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 if user.is_active == 0:
-                    messages.warning(request, 'Please activate your account before you log in.')
+                    messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
                     return HttpResponseRedirect(reverse('login'))
                 auth_login(request, user)
                 if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
@@ -91,13 +91,6 @@ def logout(request):
     auth_logout(request)
     return HttpResponseRedirect(reverse('login'))
 
-class PlainErrorList(ErrorList):
-    def __unicode__(self):
-        return self.as_plain()
-    def as_plain(self):
-        if not self: return u''
-        return u'<br/>'.join([ e for e in self ])
-
 import hashlib
 
 def register(request):
@@ -106,16 +99,23 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
-            user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']);
-            user.first_name = form.cleaned_data['firstname']
-            user.last_name = form.cleaned_data['lastname']
-            user.is_active = False
-            user.save()
-            m = hashlib.md5()
-            m.update(user.email + str(user.date_joined).split('.')[0])
-            send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. Please validate your account by going to ' + request.build_absolute_uri('validate') + '?email=' + user.email + '&validation=' + m.hexdigest() + ' . If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
-            messages.success(request, 'You have been registered. Please login to continue.')
-            return HttpResponseRedirect(reverse('login'))
+            email_search = User.objects.filter(email=form.cleaned_data['email'])
+            username_search = User.objects.filter(username=form.cleaned_data['username'])
+            if len(email_search) > 0:
+                messages.warning(request, 'Could not register you. Email is already registered.')
+            if len(username_search) > 0:
+                messages.warning(request, 'Could not register you. Username is already registered.')
+            if len(email_search) == 0 and len(username_search) == 0:
+                user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password']);
+                user.first_name = form.cleaned_data['firstname']
+                user.last_name = form.cleaned_data['lastname']
+                user.is_active = False
+                user.save()
+                m = hashlib.md5()
+                m.update(user.email + str(user.date_joined).split('.')[0])
+                send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. Please validate your account by going to ' + request.build_absolute_uri('validate') + '?email=' + user.email + '&validation=' + m.hexdigest() + ' . If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+                messages.success(request, 'You have been registered. Please login to continue.')
+                return HttpResponseRedirect(reverse('login'))
         messages.warning(request, 'Could not register you. Try again.')
     else:
         form = RegisterForm(error_class=PlainErrorList)
