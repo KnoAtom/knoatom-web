@@ -30,7 +30,7 @@ def batch_add(request):
                 user.set_password(password)
                 user.save()
                 users_added += 1
-                send_mail('Knoatom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + u + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', ['knoatom-webmaster@umich.edu'])
+                send_mail('KnoAtom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + u + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', ['knoatom-webmaster@umich.edu'])
             messages.success(request, str(users_added) + ' users have been added.')
         else:
             messages.warning(request, 'Could not add users. Did you have the format correct?')

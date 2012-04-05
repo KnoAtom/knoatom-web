@@ -44,7 +44,7 @@ def forgot_password(request):
             user = User.objects.get(email=form.cleaned_data['email'])
             if user:
                 new_password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
-                send_mail('Knoatom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+                send_mail('KnoAtom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
                 user.set_password(new_password)
                 user.save()
                 messages.success(request, 'If we have your email on file, you should expect a password reset within a couple minutes to appear in your inbox.')
@@ -112,7 +112,7 @@ def register(request):
                 user.save()
                 m = hashlib.md5()
                 m.update(user.email + str(user.date_joined).split('.')[0])
-                send_mail('Knoatom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. Please validate your account by going to ' + request.build_absolute_uri('validate') + '?email=' + user.email + '&validation=' + m.hexdigest() + ' . If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+                send_mail('KnoAtom Registration', 'You have successfully registered at knoatom.eecs.umich.edu with the username ' + user.username + '. Please validate your account by going to ' + request.build_absolute_uri('validate') + '?email=' + user.email + '&validation=' + m.hexdigest() + ' . If you did not process this registration, please contact us as soon as possible.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
                 messages.success(request, 'You have been registered. Please login to continue.')
                 return HttpResponseRedirect(reverse('login'))
         messages.warning(request, 'Could not register you. Try again.')
