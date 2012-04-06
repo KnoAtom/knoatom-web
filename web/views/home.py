@@ -30,7 +30,7 @@ def category(request, cat):
 
     # un-json-fy the videos
     for c in content:
-        c.video = [v for v in json.loads(c.video)]
+        if c.video: c.video = [v for v in json.loads(c.video)]
 
     if request.user.is_authenticated():
         for c in content:

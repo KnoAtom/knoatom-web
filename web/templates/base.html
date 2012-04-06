@@ -11,117 +11,15 @@
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-button.js"></script>
 <script type="text/javascript" src="{{ STATIC_PREFIX }}js/bootstrap-dropdown.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/knoatom.js"></script>
 <link href="{{ STATIC_PREFIX }}css/bootstrap.min.css" rel="stylesheet">
 <link href="{{ STATIC_PREFIX }}css/bootstrap-wysihtml5.css" rel="stylesheet">
 {% block head %}
 {% endblock %}
 <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-29730835-1']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
 </script>
 </head>
 <body>
-
-<script type="text/javascript">
-jQuery(document).ready(function() {
-    $('.sidebar-dropdown-toggle').click(function() {
-        if(!$(this).parent().next().is(":visible"))
-            $(this).removeClass('icon-plus').addClass('icon-minus');
-        else
-            $(this).removeClass('icon-minus').addClass('icon-plus');
-        $(this).parent().next().toggle('slow');
-        return false;
-    });
-    $('.sidebar-dropdown-toggle').each(function() {
-        if(!$(this).parent().parent().hasClass('open')) {
-            $(this).parent().next().hide();
-            $(this).removeClass('icon-minus').addClass('icon-plus');
-        }
-    });
-});
-</script>
-
-<script type="text/javascript">
-jQuery(document).ready(function() {
-    $('.rating').each(function() {
-        $(this).children().each(function() {
-            $(this).hover(function() {
-                $(this).addClass('icon-star')
-                    .removeClass('icon-star-empty')
-                    .prevAll()
-                    .addClass('icon-star')
-                    .removeClass('icon-star-empty');
-                $(this).nextAll()
-                    .addClass('icon-star-empty')
-                    .removeClass('icon-star');
-            }, function() {
-                $(this).parent().children().each(function() {
-                    if(!$(this).hasClass('filled')) {
-                        $(this).removeClass('icon-star').addClass('icon-star-empty')
-                    } else {
-                        $(this).removeClass('icon-star-empty').addClass('icon-star')
-                    }
-                });
-            });
-            $(this).click(function() {
-                $.ajax({
-                    'url': '/ajax/vote/' + $(this).parent().attr('data-submission') + '/' + $(this).attr('data-vote'),
-                    'context': this,
-                    'statusCode': {
-                        200: function(data) {
-                            console.log(data)
-                            if(data.result == true) {
-                                console.log(this)
-                                $(this)
-                                    .addClass('icon-star')
-                                    .removeClass('icon-star-empty')
-                                    .addClass('filled')
-                                $(this).prevAll()
-                                    .addClass('icon-star')
-                                    .removeClass('icon-star-empty')
-                                    .addClass('filled')
-                                $(this).nextAll()
-                                    .addClass('icon-star-empty')
-                                    .removeClass('icon-star')
-                                    .removeClass('filled')
-                            }
-                        }
-                    },
-                });
-            });
-        });
-    });
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $('.view_video').each(function() {
-        $(this).click(function(e) {
-            e.preventDefault();
-            var sid = $(this).parent().attr('data-sid');
-            var vid = $(this).parent().attr('data-vid');
-            var params = { allowScriptAccess: 'always' };
-            var atts = { id: 'video_player_' + sid, 'wmode': 'opaque' };
-            $('#video_player_' + sid).remove();
-            $(this).parent().parent().parent().prepend('<div id="video_view_' + sid + '"></div>');
-            $('#hide_video_' + sid).show();
-            swfobject.embedSWF("http://www.youtube.com/v/" + vid + "?version=3&enablejsapi=1&playerapiid=player1", "video_view_" + sid, "560", "315", "9", null, null, params, atts);
-        });
-    });
-    $('.hide_video').click(function() {
-        var sid = $(this).attr('data-hide_sid');
-        $('#hide_video_' + sid).hide();
-        $('#video_player_' + sid).remove();
-    });
-});
-</script>
 
 <div class="container">
 
@@ -192,5 +90,6 @@ KnoAtom |
 </div> <!-- end .span12 -->
 </div> <!-- end .row -->
 </div> <!-- end .container -->
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/analytics.js"></script>
 </body>
 </html>
