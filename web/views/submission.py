@@ -45,10 +45,12 @@ def index(request, sid):
     else:
         if sid:
             sub = Submission.objects.get(pk=sid)
+            if sub.video: video = ' '.join(json.loads(sub.video))
+            else: video = ''
             i_data = {
                 'title': sub.title,
                 'content': sub.content,
-                'video': ' '.join(json.loads(sub.video)),
+                'video': video,
                 'tags': sub.tags.all(),
             }
             form = SubmissionForm(initial=i_data, error_class=PlainErrorList)
