@@ -20,6 +20,7 @@ def batch_add(request):
         if form.is_valid():
             users_added = 0
             for u in form.cleaned_data['users'].split('\n'):
+                u = u.strip()
                 if u == '': continue
                 user_search = User.objects.filter( Q(email=u) | Q(username=u) )
                 if not re.match('[a-z]*@umich\.edu', u) or len(user_search) > 0:
@@ -30,7 +31,7 @@ def batch_add(request):
                 user.set_password(password)
                 user.save()
                 users_added += 1
-                send_mail('KnoAtom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + u + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', ['knoatom-webmaster@umich.edu'])
+                send_mail('KnoAtom New Account', 'You have been registered at knoatom.eecs.umich.edu. Your information is as follows:\n\nUsername: ' + u + '\nPassword: ' + password + '\n\nPlease login and change your password as soon as you can (click on your username at the bottom of the left sidebar).\n\nThank you\n\n-- The Management', 'knoatom-webmaster@umich.edu', [u, 'knoatom-webmaster@umich.edu'])
             messages.success(request, str(users_added) + ' users have been added.')
         else:
             messages.warning(request, 'Could not add users. Did you have the format correct?')

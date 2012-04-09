@@ -43,10 +43,12 @@ def forgot_password(request):
         if form.is_valid():
             user = User.objects.get(email=form.cleaned_data['email'])
             if user:
+                print 'Changing password for', user
                 new_password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
-                send_mail('KnoAtom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email])
+                send_mail('KnoAtom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email, 'knoatom-webmaster@umich.edu'])
                 user.set_password(new_password)
                 user.save()
+                print 'Successfully changed password for', user, new_password
                 messages.success(request, 'If we have your email on file, you should expect a password reset within a couple minutes to appear in your inbox.')
                 return HttpResponseRedirect(reverse('login'))
     else:
@@ -66,14 +68,20 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            if user is not None:
-                if user.is_active == 0:
-                    messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
-                    return HttpResponseRedirect(reverse('login'))
-                auth_login(request, user)
-                if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
-                return HttpResponseRedirect(reverse('home'))
+            u = User.objects.get(email=form.cleaned_data['email'])
+            if u is not None:
+                print 'Trying to log in', u.username, form.cleaned_data['password']
+            	user = authenticate(username=u.username, password=form.cleaned_data['password'])
+                if user is not None:
+                    print 'Trying to log in user', user
+                    if user.is_active == 0:
+                        messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
+                        return HttpResponseRedirect(reverse('login'))
+                    auth_login(request, user)
+                    if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
+                    return HttpResponseRedirect(reverse('home'))
+            else:
+		print 'Could not find account', form.cleaned_data['email']
         messages.warning(request, 'Could not authenticate you. Try again.')
     else:
         form = LoginForm(initial={'redirect': request.GET.get('next', None),}, error_class=PlainErrorList)
