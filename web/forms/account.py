@@ -31,5 +31,6 @@ class RegisterForm(forms.Form):
     password_confirmation = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True, label='Confirm Password')
 
 class ChangePasswordForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
+    current_password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
     new_password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
+    new_password_confirm = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True, label='Confirm New Password')

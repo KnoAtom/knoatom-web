@@ -17,14 +17,18 @@ from web.models import Category
 def index(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST, error_class=PlainErrorList)
-        if form.is_valid() and form.cleaned_data['password'] == form.cleaned_data['new_password']:
-            user = User.objects.get(pk=request.user.id)
-            if user:
-                user.set_password(form.cleaned_data['password'])
-                user.save()
-                messages.success(request, 'Your password has been changed.')
-                return HttpResponseRedirect(reverse('account'))
-        messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
+        if form.is_valid() and form.cleaned_data['new_password'] == form.cleaned_data['new_password_confirm']:
+            if not authenticate(username=request.user.username, password=form.cleaned_data['current_password']):
+                messages.warning(request, 'Please supply your current password')
+            else:
+                user = User.objects.get(pk=request.user.id)
+                if user:
+                    user.set_password(form.cleaned_data['new_password'])
+                    user.save()
+                    messages.success(request, 'Your password has been changed.')
+                    return HttpResponseRedirect(reverse('account'))
+        else:
+            messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
     else:
         form = ChangePasswordForm(error_class=PlainErrorList)
 
@@ -69,19 +73,16 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
-            u = User.objects.get(email=form.cleaned_data['email'])
-            if u is not None:
-                logging.debug('Trying to log in %s: %s' % (u.username, form.cleaned_data['password']))
-            	user = authenticate(username=u.username, password=form.cleaned_data['password'])
-                if user is not None:
-                    logging.debug('Trying to log in user %s' % user)
-                    if user.is_active == 0:
-                        messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
-                        return HttpResponseRedirect(reverse('login'))
-                    auth_login(request, user)
-                    if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
-                    return HttpResponseRedirect(reverse('home'))
-            else:
+            logging.debug('Trying to log in %s: %s' % (form.cleaned_data['email'], form.cleaned_data['password']))
+            user = authenticate(username=form.cleaned_data['email'].strip(), password=form.cleaned_data['password'])
+            if user is not None:
+                logging.debug('Trying to log in user %s' % user)
+                if user.is_active == 0:
+                    messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
+                    return HttpResponseRedirect(reverse('login'))
+                auth_login(request, user)
+                if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
+                return HttpResponseRedirect(reverse('home'))
 		logging.debug('Could not find account %s' % form.cleaned_data['email'])
         messages.warning(request, 'Could not authenticate you. Try again.')
     else:
