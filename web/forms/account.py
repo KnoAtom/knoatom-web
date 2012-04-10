@@ -34,3 +34,8 @@ class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
     new_password = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True)
     new_password_confirm = forms.CharField(widget=forms.PasswordInput, max_length=100, required=True, label='Confirm New Password')
+    action = forms.CharField(widget=forms.HiddenInput(), initial='password')
+
+class ChangeUsernameForm(forms.Form):
+    new_username = forms.CharField(max_length=100, required=True)
+    action = forms.CharField(widget=forms.HiddenInput(), initial='username')

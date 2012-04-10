@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.forms.util import ErrorList
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, RequestContext
+import hashlib
 import logging
 import random, string
 from web.forms.account import *
@@ -16,26 +17,45 @@ from web.models import Category
 @login_required()
 def index(request):
     if request.method == 'POST':
-        form = ChangePasswordForm(request.POST, error_class=PlainErrorList)
-        if form.is_valid() and form.cleaned_data['new_password'] == form.cleaned_data['new_password_confirm']:
-            if not authenticate(username=request.user.username, password=form.cleaned_data['current_password']):
-                messages.warning(request, 'Please supply your current password')
+        if request.POST.get('action') == 'password':
+            username_form = ChangeUsernameForm(error_class=PlainErrorList)
+            password_form = ChangePasswordForm(request.POST, error_class=PlainErrorList)
+            if password_form.is_valid() and password_form.cleaned_data['new_password'] == password_form.cleaned_data['new_password_confirm']:
+                if not authenticate(username=request.user.username, password=password_form.cleaned_data['current_password']):
+                    messages.warning(request, 'Please supply your current password')
+                else:
+                    user = User.objects.get(pk=request.user.id)
+                    if user:
+                        user.set_password(password_form.cleaned_data['new_password'])
+                        user.save()
+                        messages.success(request, 'Your password has been changed.')
+                        return HttpResponseRedirect(reverse('account'))
             else:
+                messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
+        elif request.POST.get('action') == 'username':
+            password_form = ChangePasswordForm(error_class=PlainErrorList)
+            username_form = ChangeUsernameForm(request.POST, error_class=PlainErrorList)
+            if username_form.is_valid():
                 user = User.objects.get(pk=request.user.id)
-                if user:
-                    user.set_password(form.cleaned_data['new_password'])
+                list_with_username = User.objects.filter(username=username_form.cleaned_data['new_username'])
+                if len(list_with_username) > 0:
+                    messages.warning(request, 'The username %s is currently in use. Please choose a different username.' % username_form.cleaned_data['new_username'])
+                if user and len(list_with_username) == 0:
+                    user.username = username_form.cleaned_data['new_username']
                     user.save()
-                    messages.success(request, 'Your password has been changed.')
+                    messages.success(request, 'Your username has been changed.')
                     return HttpResponseRedirect(reverse('account'))
-        else:
-            messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
+            else:
+                messages.warning(request, 'Could not change your username.')
     else:
-        form = ChangePasswordForm(error_class=PlainErrorList)
+        password_form = ChangePasswordForm(error_class=PlainErrorList)
+        username_form = ChangeUsernameForm(error_class=PlainErrorList)
 
     t = loader.get_template('account/index.html')
     c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('account'), 'title': 'Account'}],
-        'form': form,
+        'password_form': password_form,
+        'username_form': username_form,
         'parent_categories': Category.objects.filter(parent=None),
     })
     return HttpResponse(t.render(c))
@@ -74,15 +94,18 @@ def login(request):
         form = LoginForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
             logging.debug('Trying to log in %s: %s' % (form.cleaned_data['email'], form.cleaned_data['password']))
-            user = authenticate(username=form.cleaned_data['email'].strip(), password=form.cleaned_data['password'])
-            if user is not None:
-                logging.debug('Trying to log in user %s' % user)
-                if user.is_active == 0:
-                    messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
-                    return HttpResponseRedirect(reverse('login'))
-                auth_login(request, user)
-                if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
-                return HttpResponseRedirect(reverse('home'))
+            users = User.objects.filter(email=form.cleaned_data['email'].strip())
+            if users.count() == 1:
+                u = users[0]
+                user = authenticate(username=u.username, password=form.cleaned_data['password'])
+                if user is not None:
+                    logging.debug('Trying to log in user %s' % user)
+                    if user.is_active == 0:
+                        messages.warning(request, 'Please activate your account before you log in. Contact knoatom-webmaster@umich.edu if you need further assistance.')
+                        return HttpResponseRedirect(reverse('login'))
+                    auth_login(request, user)
+                    if form.cleaned_data['redirect']: return HttpResponseRedirect(form.cleaned_data['redirect'])
+                    return HttpResponseRedirect(reverse('home'))
 		logging.debug('Could not find account %s' % form.cleaned_data['email'])
         messages.warning(request, 'Could not authenticate you. Try again.')
     else:
@@ -100,8 +123,6 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect(reverse('login'))
-
-import hashlib
 
 def register(request):
     if request.user.is_authenticated():
