@@ -98,6 +98,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    'knoatom-web.web.middleware.SecureRequiredMiddleware.SecureRequiredMiddleware',
 )
 
 ROOT_URLCONF = 'knoatom-web.urls'
@@ -155,3 +157,9 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGIN_URL = 'login'
+
+HTTPS_SUPPORT = False
+SECURE_REQUIRED_PATHS = (
+    '/login',
+    '/account',
+)
