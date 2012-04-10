@@ -3,14 +3,14 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden, HttpResponseServerError
 from django.template import RequestContext, loader
 import json
-from web.models import Category, Submission, Vote
+from web.models import *
 
-def vote(request, submission_id, vote_value):
+def vote(request, submission_id, vote_category, vote_value):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET'])
     if request.user.is_authenticated():
         s = Submission.objects.get(id=submission_id)
-        curr_v = Vote.objects.filter(submission=s).filter(user=request.user)
+        curr_v = Vote.objects.filter(submission=s).filter(user=request.user).filter(v_category=vote_category)
         if len(curr_v) == 1:
             curr_v = curr_v[0]
             curr_v.rating = vote_value
@@ -20,6 +20,7 @@ def vote(request, submission_id, vote_value):
             curr_v.submission = s
             curr_v.user = request.user
             curr_v.rating = vote_value
+            curr_v.v_category = VoteCategory.objects.get(id=vote_category)
             curr_v.save()
         else:
             return HttpResponseServerError(json.dumps({'result': False, 'error': 'error looking up your voting information'}), mimetype="application/json")

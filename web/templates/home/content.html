@@ -1,3 +1,4 @@
+{% load my_filters %}
 {% for c in content %}
 <div class="row submission">
 <div class="span9">
@@ -11,16 +12,28 @@
 <p><a href="{% url submit c.id %}">Edit</a></p>
 </div>
 {% endif %}
-</div>
 {% if user.is_authenticated %}
-<div class="rating" data-submission="{{ c.id }}">
-<i class="{% if c.user_rating >= 1 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="1"></i>
-<i class="{% if c.user_rating >= 2 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="2"></i>
-<i class="{% if c.user_rating >= 3 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="3"></i>
-<i class="{% if c.user_rating >= 4 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="4"></i>
-<i class="{% if c.user_rating >= 5 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="5"></i>
-</div>
+{% for v in vote_categories %}
+<span class="rating" data-vote-category="{{ v.id }}" data-submission="{{ c.id }}">
+{{ v }}: 
+{% if not c.user_rating|in_dict:v.id %}
+<i class="icon-star-empty" data-vote="1"></i>
+<i class="icon-star-empty" data-vote="2"></i>
+<i class="icon-star-empty" data-vote="3"></i>
+<i class="icon-star-empty" data-vote="4"></i>
+<i class="icon-star-empty" data-vote="5"></i>
+{% else %}
+<i class="{% if c.user_rating|lookup:v.id >= 1 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="1"></i>
+<i class="{% if c.user_rating|lookup:v.id >= 2 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="2"></i>
+<i class="{% if c.user_rating|lookup:v.id >= 3 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="3"></i>
+<i class="{% if c.user_rating|lookup:v.id >= 4 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="4"></i>
+<i class="{% if c.user_rating|lookup:v.id >= 5 %}filled icon-star{% else %}icon-star-empty{% endif %}" data-vote="5"></i>
 {% endif %}
+</span>
+{% if not forloop.last %} | {% endif %}
+{% endfor %} 
+{% endif %}
+</div>
 {% autoescape off %}
 <p>{{ c.content }}</p>
 {% endautoescape %}
@@ -43,4 +56,4 @@ Tags:
 </div> <!-- end .well -->
 </div> <!-- end .span9 -->
 </div> <!-- end .row .submission-->
-{% endfor%}
+{% endfor %}

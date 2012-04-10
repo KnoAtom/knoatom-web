@@ -3,13 +3,14 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 import json
-from web.models import Category, Submission
+from web.models import Category, Submission, VoteCategory
 
 def index(request):
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}],
         'parent_categories': Category.objects.filter(parent=None),
+        'vote_categories': VoteCategory.objects.all(),
     })
     return HttpResponse(t.render(c))
 
@@ -35,8 +36,10 @@ def category(request, cat):
     if request.user.is_authenticated():
         for c in content:
             ratings = c.votes.filter(user=request.user)
-            if ratings.count() == 1:
-                c.user_rating = ratings[0].rating
+            c.user_rating = {}
+            if ratings.count() > 0:
+                for r in ratings:
+                    c.user_rating[int(r.v_category.id)] = int(r.rating)
 
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {
@@ -45,6 +48,7 @@ def category(request, cat):
         'parent_category': parent,
         'parent_categories': Category.objects.filter(parent=None),
         'selected_category': category,
+        'vote_categories': VoteCategory.objects.all(),
     })
     return HttpResponse(t.render(c))
 

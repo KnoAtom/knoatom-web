@@ -44,7 +44,7 @@ init_rating_stars = function() {
             });
             $(this).click(function() {
                 $.ajax({
-                    'url': '/ajax/vote/' + $(this).parent().attr('data-submission') + '/' + $(this).attr('data-vote'),
+                    'url': '/ajax/vote/' + $(this).parent().attr('data-submission') + '/' + $(this).parent().attr('data-vote-category') + '/' + $(this).attr('data-vote'),
                     'context': this,
                     'statusCode': {
                         200: function(data) {
