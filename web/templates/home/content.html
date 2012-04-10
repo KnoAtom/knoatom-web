@@ -36,6 +36,7 @@
 </div>
 {% endif %}
 <div class="well">
+Tags: 
 {% for t in c.tags.all %}
 <a href="{% url category t.id %}">{{ t }}</a> {% if not forloop.last %} | {% endif %}
 {% endfor %}
