@@ -4,9 +4,13 @@
 
 {% if not content %}
 <div class="page-header">
-<h1>Welcome</h1>
+<h1>KnoAtom</h1>
 </div>
+{% if top_ranked_videos %}
+{% include "home/top_ratings.html" %}
+{% else %}
 <p>Click on a category on the left to get started!</p>
+{% endif %}
 {% endif %}
 
 {% include "home/content.html" %}

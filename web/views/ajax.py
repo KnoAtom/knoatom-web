@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden, HttpResponseServerError
@@ -5,6 +6,7 @@ from django.template import RequestContext, loader
 import json
 from web.models import *
 
+@login_required()
 def vote(request, submission_id, vote_category, vote_value):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET'])

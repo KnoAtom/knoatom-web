@@ -1,20 +1,16 @@
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 import json
 from web.models import Category, Submission, VoteCategory
 
-def index(request):
-    t = loader.get_template('home/index.html')
-    c = RequestContext(request, {
-        'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}],
-        'parent_categories': Category.objects.filter(parent=None),
-        'vote_categories': VoteCategory.objects.all(),
-    })
-    return HttpResponse(t.render(c))
-
 def category(request, cat):
+    """
+    - Generates the view for a specific category
+    - Creates the breadcrumbs for the page
+    """
     category = Category.objects.get(id=cat)
     parents = category.parent.all()
     breadcrumbs = [{'url': reverse('home'), 'title': 'Home'}]
@@ -52,7 +48,39 @@ def category(request, cat):
     })
     return HttpResponse(t.render(c))
 
+def index(request):
+    """
+    - Generates the home page
+    - Generates a list of the most popular videos for each category of rating
+    - Use memcached to save the popular video rankings to save a lot of time
+    """
+    
+    # get the highest ranked submissions
+    top_ranked_videos = cache.get('top_ranked_videos')
+    if not top_ranked_videos:
+        top_ranked_videos = []
+        for category in VoteCategory.objects.all():
+            # for now, calculate an average for each video
+            top_ranked_videos.append({
+                'vote_category': category, 
+                'submissions': Submission.objects.filter(votes__v_category=category).annotate(average_rating=Avg('votes__rating')).order_by('-average_rating')[:5],
+            })
+        cache.set('top_ranked_videos', top_ranked_videos, 60*10)
+
+    t = loader.get_template('home/index.html')
+    c = RequestContext(request, {
+        'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}],
+        'parent_categories': Category.objects.filter(parent=None),
+        'top_ranked_videos': top_ranked_videos,
+        'vote_categories': VoteCategory.objects.all(),
+    })
+    return HttpResponse(t.render(c))
+
 def post(request, sid):
+    """
+    - Generates the view for the specific post (submission) from `sid`
+    - Creates the appropriate breadcrumbs for the categories
+    """
     s = Submission.objects.get(id=sid)
     s.video = [v for v in json.loads(s.video)]
     breadcrumbs = [{'url': reverse('home'), 'title': 'Home'}]
@@ -84,5 +112,6 @@ def post(request, sid):
         'parent_category': parent,
         'parent_categories': Category.objects.filter(parent=None),
         'selected_category': category,
+        'vote_categories': VoteCategory.objects.all(),
     })
     return HttpResponse(t.render(c))
