@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, RequestContext
 import random, string, re
 from web.forms.admin import *
-from web.models import Category, User
+from web.models import Category, User, VoteCategory, Submission
 
 @login_required()
 def batch_add(request):
@@ -42,6 +42,27 @@ def batch_add(request):
     c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('batch_add'), 'title': 'Batch Add'}],
         'form': form,
+        'parent_categories': Category.objects.filter(parent=None),
+    })
+    return HttpResponse(t.render(c))
+
+@login_required()
+def list_videos(request):
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse('home'))
+
+    top_ranked_videos = []
+    for category in VoteCategory.objects.all():
+        # for now, calculate an average for each video
+        top_ranked_videos.append({
+            'vote_category': category,
+            'submissions': Submission.objects.filter(votes__v_category=category).annotate(average_rating=Avg('votes__rating')).order_by('-average_rating'),
+        })
+
+    t = loader.get_template('admin/videos.html')
+    c = RequestContext(request, {
+        'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('list_videos'), 'title': 'All Videos'}],
+        'top_ranked_videos': top_ranked_videos,
         'parent_categories': Category.objects.filter(parent=None),
     })
     return HttpResponse(t.render(c))

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^account/?$', 'web.views.account.index', name='account'),
 
     url(r'^batch_add/?$', 'web.views.admin.batch_add', name='batch_add'),
+    url(r'^view_videos/?$', 'web.views.admin.list_videos', name='list_videos'),
 
     url(r'^ajax/vote/(\d+)/(\d+)/(\d+)/?$', 'web.views.ajax.vote', name='vote'),
 
