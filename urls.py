@@ -30,4 +30,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^mu-25b8a55c-a9fee579-723dcc44-9782bfc2$', 'web.views.blitz.index'),
+    url(r'^google3da26e317e8e8cda.html$', 'web.views.google_webmaster.index'),
 )
