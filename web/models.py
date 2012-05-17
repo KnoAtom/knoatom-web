@@ -9,6 +9,7 @@ class Category(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Categories"
 
     def __unicode__(self):
         return self.name
@@ -31,6 +32,7 @@ class VoteCategory(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Vote categories"
 
     def __unicode__(self):
         return self.name
