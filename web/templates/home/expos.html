@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href = "{% url category selected_category.id %}">Videos</a> |
+Expositions
+<br />
+<br />
+<h1>Expositions</h1>
+<br />
+{% if not expositions %}
+No expositions exist for this category yet!
+{% endif %}
+{% for e in expositions %}
+<a href="{{ e.link }}">{{ e.title }}</a>
+<br />
+{% endfor %}
+{% endblock %}

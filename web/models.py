@@ -9,9 +9,21 @@ class Category(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Categories"
 
     def __unicode__(self):
         return self.name
+
+class Exposition(models.Model):
+    title = models.CharField(max_length=100) # title of the article or website
+    link = models.CharField(max_length=100) # A URL to the location of the exposition
+    cat = models.ForeignKey(Category)
+
+    class Meta:
+        ordering = ['title']
+
+    def __unicode__(self):
+        return self.title
 
 class Submission(models.Model):
     owner = models.ForeignKey(User)
@@ -31,6 +43,7 @@ class VoteCategory(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Vote categories"
 
     def __unicode__(self):
         return self.name
