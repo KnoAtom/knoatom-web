@@ -1,6 +1,7 @@
-Videos |
-<a href = "{% url expos selected_category.id %}">Expositions</a>
+{% if selected_category %}
+Videos | <a href = "{% url expos selected_category.id %}">Expositions</a>
 <br />
+{% endif %}
 {% load my_filters %}
 {% for c in content %}
 <div class="row submission">
