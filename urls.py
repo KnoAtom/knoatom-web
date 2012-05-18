@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 
     url(r'^post/(\d+)/?$', 'web.views.home.post', name='post'),
     url(r'^category/(\d+)/?$', 'web.views.home.category', name='category'),
+    url(r'^expos/(\d+)/?$', 'web.views.home.expos', name='expos'),
     url(r'^$', 'web.views.home.index', name='home'),
 
     # Uncomment the admin/doc line below to enable admin documentation:

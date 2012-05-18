@@ -14,6 +14,17 @@ class Category(models.Model):
     def __unicode__(self):
         return self.name
 
+class Exposition(models.Model):
+    title = models.CharField(max_length=100) # title of the article or website
+    link = models.CharField(max_length=100) # A URL to the location of the exposition
+    cat = models.ForeignKey(Category)
+
+    class Meta:
+        ordering = ['title']
+
+    def __unicode__(self):
+        return self.title
+
 class Submission(models.Model):
     owner = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True, blank=True)
