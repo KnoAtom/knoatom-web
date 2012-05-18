@@ -166,6 +166,7 @@ HTTPS_SUPPORT = False
 SECURE_REQUIRED_PATHS = (
     '/login',
     '/account',
+    '/admin',
 )
 
 CACHES = {
