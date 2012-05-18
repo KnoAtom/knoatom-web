@@ -7,6 +7,8 @@ ADMINS = (
     ('Bryan Kendall', 'bkend@umich.edu'),
 )
 
+EMAIL_SUBJECT_PREFIX = '[KnoAtom] '
+
 MANAGERS = ADMINS
 
 DATABASES = {
