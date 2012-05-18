@@ -9,6 +9,8 @@ ADMINS = (
 
 EMAIL_SUBJECT_PREFIX = '[KnoAtom] '
 
+SERVER_EMAIL = 'knoatom-noreply@umich.edu'
+
 MANAGERS = ADMINS
 
 DATABASES = {
