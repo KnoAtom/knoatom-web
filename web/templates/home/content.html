@@ -1,6 +1,7 @@
 {% if selected_category %}
+<h3>
 Videos | <a href = "{% url expos selected_category.id %}">Expositions</a>
-<br />
+</h3>
 {% endif %}
 {% load my_filters %}
 {% for c in content %}
