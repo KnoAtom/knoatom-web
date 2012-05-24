@@ -12,7 +12,17 @@ Expositions
 No expositions exist for this category yet!
 {% endif %}
 {% for e in expositions %}
-<a href="{{ e.link }}">{{ e.title }}</a>
+<a class="expo_link" data-toggle="modal" href="global_modal" data-href="{{ e.link }}">{{ e.title }}</a>
 <br />
 {% endfor %}
+
+<script type="text/javascript">
+    $('.expo_link').each(function() {
+        $(this).click(function() {
+            $($('#global_modal').children()[1]).html('<iframe style="width:520px;" src="' + $(this).attr('data-href') + '">Loading...</iframe>');
+            $('#global_modal').modal('toggle');
+        })
+    });
+</script>
+
 {% endblock %}
