@@ -39,14 +39,14 @@ def index(request):
                 user = User.objects.get(pk=request.user.id)
                 list_with_username = User.objects.filter(username=username_form.cleaned_data['new_username'])
                 if len(list_with_username) > 0:
-                    messages.warning(request, 'The username %s is currently in use. Please choose a different username.' % username_form.cleaned_data['new_username'])
+                    messages.warning(request, 'The display name %s is currently in use. Please choose a different display name.' % username_form.cleaned_data['new_username'])
                 if user and len(list_with_username) == 0:
                     user.username = username_form.cleaned_data['new_username']
                     user.save()
-                    messages.success(request, 'Your username has been changed.')
+                    messages.success(request, 'Your display name has been changed.')
                     return HttpResponseRedirect(reverse('account'))
             else:
-                messages.warning(request, 'Could not change your username.')
+                messages.warning(request, 'Could not change your display name.')
     else:
         password_form = ChangePasswordForm(error_class=PlainErrorList)
         username_form = ChangeUsernameForm(error_class=PlainErrorList)

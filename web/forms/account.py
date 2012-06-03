@@ -37,5 +37,5 @@ class ChangePasswordForm(forms.Form):
     action = forms.CharField(widget=forms.HiddenInput(), initial='password')
 
 class ChangeUsernameForm(forms.Form):
-    new_username = forms.CharField(max_length=100, required=True)
+    new_username = forms.CharField(max_length=100, required=True, label='Display Name')
     action = forms.CharField(widget=forms.HiddenInput(), initial='username')

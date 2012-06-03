@@ -13,7 +13,7 @@
 <ul class="nav nav-tabs">
 
 <li class="active"><a href="#1" data-toggle="tab">Password</a></li>
-<li class=""><a href="#2" data-toggle="tab">Username</a></li>
+<li class=""><a href="#2" data-toggle="tab">Display Name</a></li>
 
 </ul> <!-- .nav nav-tabs -->
 <div class="tab-content">
@@ -31,7 +31,7 @@
 </div> <!-- #1 -->
 
 <div class="tab-pane" id="2">
-<h3>Change Username</h3>
+<h3>Change Display Name</h3>
 <form class="form-horizontal" action="{% url account %}" method="post">
 {% csrf_token %}
 {% include "form_template.html" with form=username_form %}
