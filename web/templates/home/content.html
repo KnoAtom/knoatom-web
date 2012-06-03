@@ -10,7 +10,11 @@ Videos | <a href = "{% url expos selected_category.id %}">Expositions</a>
 <div class="page-header" style="padding-bottom:5px;">
 <h2>
 <a style="color:black;" href="{% url post c.id %}">{{ c }}</a>
+{% if c.owner.is_staff %}
+<small>by KnoAtom Staff</small>
+{% else %}
 <small>by {{ c.owner }}</small>
+{% endif %}
 </h2>
 {% if user.is_staff or user.is_superuser or c.owner == user %}
 <div class="edit">
