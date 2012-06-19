@@ -11,7 +11,7 @@ rm -rf /var/www/knoatom-web/.git
 cd /var/www/knoatom-web
 
 # restore settings file
-cp /var/www/knoatom-backup/settings.py .
+cp /var/www/knoatom-backup/settings.py knoatom/
 
 # collect static stuff
 python manage.py collectstatic --noinput
