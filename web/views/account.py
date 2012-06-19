@@ -66,16 +66,18 @@ def forgot_password(request):
     if request.method == 'POST':
         form = ForgotPasswordForm(request.POST, error_class=PlainErrorList)
         if form.is_valid():
-            user = User.objects.get(email=form.cleaned_data['email'])
-            if user:
-                logging.debug('Changing password for %s' % user)
-                new_password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
-                send_mail('KnoAtom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email, 'knoatom-webmaster@umich.edu'])
-                user.set_password(new_password)
-                user.save()
-                logging.debug('Successfully changed password for %s: %s' % (user, new_password))
-                messages.success(request, 'If we have your email on file, you should expect a password reset within a couple minutes to appear in your inbox.')
-                return HttpResponseRedirect(reverse('login'))
+            user_check = User.objects.filter(email=form.cleaned_data['email'])
+            if user_check.count() == 1:
+                user = User.objects.get(email=form.cleaned_data['email'])
+                if user:
+                    logging.debug('Changing password for %s' % user)
+                    new_password = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(10))
+                    send_mail('KnoAtom Password Reset', 'You requested to reset your password at knoatom.eecs.umich.edu. Here is your new password: ' + new_password + '\n\nIf you did not request this change, contact us immediatly.\n\n-- The Management', 'knoatom-webmaster@umich.edu', [user.email, 'knoatom-webmaster@umich.edu'])
+                    user.set_password(new_password)
+                    user.save()
+                    logging.debug('Successfully changed password for %s: %s' % (user, new_password))
+            messages.success(request, 'If we have your email on file, you should expect a password reset within a couple minutes to appear in your inbox.')
+            return HttpResponseRedirect(reverse('login'))
     else:
         form = ForgotPasswordForm(error_class=PlainErrorList)
 
