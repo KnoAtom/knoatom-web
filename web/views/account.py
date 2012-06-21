@@ -16,9 +16,11 @@ from web.models import Category
 
 @login_required()
 def index(request):
+    password_form = ChangePasswordForm(error_class=PlainErrorList)
+    username_form = ChangeUsernameForm(error_class=PlainErrorList)
+    delete_account_form = DeleteAccountForm(error_class=PlainErrorList)
     if request.method == 'POST':
         if request.POST.get('action') == 'password':
-            username_form = ChangeUsernameForm(error_class=PlainErrorList)
             password_form = ChangePasswordForm(request.POST, error_class=PlainErrorList)
             if password_form.is_valid() and password_form.cleaned_data['new_password'] == password_form.cleaned_data['new_password_confirm']:
                 if not authenticate(username=request.user.username, password=password_form.cleaned_data['current_password']):
@@ -33,7 +35,6 @@ def index(request):
             else:
                 messages.warning(request, 'Could not change your password. Make sure you type the same password twice in the form below')
         elif request.POST.get('action') == 'username':
-            password_form = ChangePasswordForm(error_class=PlainErrorList)
             username_form = ChangeUsernameForm(request.POST, error_class=PlainErrorList)
             if username_form.is_valid():
                 user = User.objects.get(pk=request.user.id)
@@ -47,15 +48,27 @@ def index(request):
                     return HttpResponseRedirect(reverse('account'))
             else:
                 messages.warning(request, 'Could not change your display name.')
-    else:
-        password_form = ChangePasswordForm(error_class=PlainErrorList)
-        username_form = ChangeUsernameForm(error_class=PlainErrorList)
+
+        elif request.POST.get('action') == 'delete_account':
+            delete_account_form = DeleteAccountForm(request.POST, error_class=PlainErrorList)
+            if delete_account_form.is_valid():
+                user = User.objects.get(pk=request.user.id)
+                if user and delete_account_form.cleaned_data['confirmation'] == 'KnoAtom':
+                    user.delete()
+                    auth_logout(request)
+                    messages.success(request, 'Your account has been deleted. Thank for your time! --KnoAtom Staff')
+                    return HttpResponseRedirect(reverse('home'))
+                else:
+                    messages.warning(request, 'The confirmation was not correct, or we could not find your account. Sorry, try again.')
+            else:
+                messages.warning(request, 'We could not delete your account.')
 
     t = loader.get_template('account/index.html')
     c = RequestContext(request, {
         'breadcrumbs': [{'url': reverse('home'), 'title': 'Home'}, {'url':reverse('account'), 'title': 'Account'}],
         'password_form': password_form,
         'username_form': username_form,
+        'delete_account_form': delete_account_form,
         'parent_categories': Category.objects.filter(parent=None),
     })
     return HttpResponse(t.render(c))

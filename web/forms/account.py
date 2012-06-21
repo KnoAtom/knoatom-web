@@ -39,3 +39,7 @@ class ChangePasswordForm(forms.Form):
 class ChangeUsernameForm(forms.Form):
     new_username = forms.CharField(max_length=100, required=True, label='Display Name')
     action = forms.CharField(widget=forms.HiddenInput(), initial='username')
+
+class DeleteAccountForm(forms.Form):
+    confirmation = forms.CharField(max_length=100, required=True, label='Confirmation')
+    action = forms.CharField(widget=forms.HiddenInput(), initial='delete_account')
