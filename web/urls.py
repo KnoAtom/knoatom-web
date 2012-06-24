@@ -17,7 +17,6 @@ urlpatterns = patterns('',
 
     url(r'^post/(\d+)/?$', 'web.views.home.post', name='post'),
     url(r'^category/(\d+)/?$', 'web.views.home.category', name='category'),
-    url(r'^expos/(\d+)/?$', 'web.views.home.expos', name='expos'),
     url(r'^$', 'web.views.home.index', name='home'),
 
     url(r'^mu-25b8a55c-a9fee579-723dcc44-9782bfc2$', 'web.views.blitz.index'),

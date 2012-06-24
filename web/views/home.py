@@ -37,48 +37,19 @@ def category(request, cat):
                 for r in ratings:
                     c.user_rating[int(r.v_category.id)] = int(r.rating)
 
+
+    expositions = category.exposition_set.all()
     t = loader.get_template('home/index.html')
     c = RequestContext(request, {
         'breadcrumbs': breadcrumbs,
         'content': content,
+        'expositions': expositions,
         'parent_category': parent,
         'parent_categories': Category.objects.filter(parent=None),
         'selected_category': category,
         'vote_categories': VoteCategory.objects.all(),
     })
     return HttpResponse(t.render(c))
-
-def expos(request, cat):
-    """
-    - Given a category, generates links (URLs) to all of its expositions
-    """
-    # The following lines calculate the hierarchy of categories.
-    # It's the same as the the first few lines of the above category function.
-    # clean that up sometime
-    category = Category.objects.get(id=cat)
-    parents = category.parent.all()
-    breadcrumbs = [{'url': reverse('home'), 'title': 'Home'}]
-
-    if len(parents) == 0:
-        parent = category
-        content = Submission.objects.filter( Q(tags=category) | Q(tags__in=category.child.distinct()) ).distinct()
-    else:
-        parent = parents[0]
-        content = Submission.objects.filter( Q(tags=category) ).distinct()
-        breadcrumbs.append({'url': reverse('category', args=[parent.id]), 'title': parent})
-
-    breadcrumbs.append({'url': reverse('category', args=[category.id]), 'title': category})
-
-    expositions = category.exposition_set.all()
-    t = loader.get_template('home/expos.html')
-    c = RequestContext(request, {
-        'breadcrumbs': breadcrumbs,
-        'parent_category' : parent,
-        'parent_categories': Category.objects.filter(parent=None),
-        'expositions': expositions,
-        'selected_category' : category
-    })
-    return HttpResponse(t.render(c))   
 
 def index(request):
     """

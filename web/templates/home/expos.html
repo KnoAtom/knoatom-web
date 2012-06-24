@@ -1,13 +1,3 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h3>
-<a href = "{% url category selected_category.id %}">Videos</a> |
-Expositions
-</h3>
-<br />
-<h1>Expositions</h1>
-<br />
 {% if not expositions %}
 No expositions exist for this category yet!
 {% endif %}
@@ -24,5 +14,3 @@ No expositions exist for this category yet!
         })
     });
 </script>
-
-{% endblock %}
