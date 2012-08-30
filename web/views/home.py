@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Avg
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.template import RequestContext, loader
 import json
 from web.models import Category, Submission, VoteCategory
@@ -11,7 +11,10 @@ def category(request, cat):
     - Generates the view for a specific category
     - Creates the breadcrumbs for the page
     """
-    category = Category.objects.get(id=cat)
+    try:
+        category = Category.objects.get(id=cat)
+    except Category.DoesNotExist:
+        raise Http404
     parents = category.parent.all()
     breadcrumbs = [{'url': reverse('home'), 'title': 'Home'}]
 
